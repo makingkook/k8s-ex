@@ -1,0 +1,33 @@
+# eksctl create cluster -f cluster.yaml
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: demo-cluster
+  region: ap-northeast-2
+  version: "1.34"
+
+iam:
+  withOIDC: true
+
+addons:
+  - name: vpc-cni
+    configurationValues: '{"enableNetworkPolicy": "true"}' # networkpolicy.yaml에 필요
+  - name: coredns
+  - name: kube-proxy
+  - name: metrics-server # hpa.yaml에 필요
+  - name: aws-ebs-csi-driver # pvc.yaml, statefulset.yaml에 필요
+    wellKnownPolicies:
+      ebsCSIController: true
+
+managedNodeGroups:
+  - name: ng-default
+    instanceType: t3.medium
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 4
+    volumeSize: 20
+    privateNetworking: true
+    iam:
+      withAddonPolicies:
+        awsLoadBalancerController: true # ingress.yaml(ALB)에 필요

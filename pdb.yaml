@@ -1,0 +1,10 @@
+# 노드 교체/드레인 시 web Pod가 최소 1개는 살아있도록 보장
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: web
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: web

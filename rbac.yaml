@@ -1,0 +1,26 @@
+# ServiceAccount에 현재 네임스페이스 Pod 읽기 권한만 부여
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pod-reader
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-reader
+subjects:
+  - kind: ServiceAccount
+    name: pod-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pod-reader
